@@ -13,17 +13,12 @@ int N;			//input row
 int M;			//input col
 int K;			// 게임 턴 횟수
 
-//int global_str_row;			// 레이저 공격시 초기 위치 알기위해 사용
-//int global_str_col;			// 레이저 공격시 초기 위치 알기위해 사용
-
 int num_of_alive;			// 부서지지 않은 포탑 개수
 bool razer_success;			// 레이저 공격 성공 여부 확인
 
 int mapp[MAX_N][MAX_M];						// mapp : 0: 부서짐, 1~5000 : 공격력
-// bool visit[MAX_N][MAX_M];					// 레이저 공격 경로 탐색시 사용(방문여부 저장)
 
 int attack_turn[MAX_N][MAX_M];				// 포탑의 공격 턴 저장 0 : 공격 X, 1~ : 공격했던 턴
-//int dist[MAX_N][MAX_M];						// dist[a][b] : 시작점 ~ (a,b) 까지의 거리 저장
 int back_row[MAX_N][MAX_M];					// back_row[a][b] : (a,b)로 도착하기 전 위치의 row 저장, for BFS 경로 역추적
 int back_col[MAX_N][MAX_M];					// back_col[a][b] : (a,b)로 도착하기 전 위치의 col 저장, for BFS 경로 역추적
 bool is_attacked[MAX_N][MAX_M];				// 공격 당했는지 여부 저장
@@ -65,22 +60,18 @@ int main()
 		//// 2-1. 공격 수행할 포탑 선정
 		int pick_attacker_row = -1;			// 공격 수행할 포탑 row
 		int pick_attacker_col = -1;			// 공격 수행할 포탑 col
-		num_of_alive = 0;
+		//num_of_alive = 0;
 		pick_attacker(i, &pick_attacker_row, &pick_attacker_col);
 
-		if (num_of_alive == 1) break;
+		//if (num_of_alive == 1) break;
 
 		//// 2-2. 공격 대상 포탑 선정
 		int pick_tar_row = -1;			// 공격 대상 포탑 row
 		int pick_tar_col = -1;			// 공격 대상 포탑 col
 		pick_target(i, pick_attacker_row, pick_attacker_col, &pick_tar_row, &pick_tar_col);
 
-		//global_str_row = pick_attacker_row;
-		//global_str_col = pick_attacker_col;
-
 		is_attacked[pick_attacker_row][pick_attacker_col] = true;
 		//// 2-3. 레이저 공격 시도
-		//DFS(pick_attacker_row, pick_attacker_col, pick_tar_row, pick_tar_col);
 		razer_success = BFS(pick_attacker_row, pick_attacker_col, pick_tar_row, pick_tar_col);
 
 		//// 2-4. 포탑공격 수행
@@ -104,16 +95,22 @@ int main()
 				{
 					mapp[j][k] += 1;
 				}
-				else if (is_attacked[j][k])
+
+				if (mapp[j][k] <= 0)
+				{
+					mapp[j][k] = 0;
+				}
+
+				if (is_attacked[j][k])
 				{
 					is_attacked[j][k] = false;
 				}
-
+				
 				if (mapp[j][k] > 0)
 				{
 					++num_of_alive;
 				}
-
+				
 				// 각 턴의 BFS 관련 DS, var 초기화
 				back_row[j][k] = 0;
 				back_col[j][k] = 0;
