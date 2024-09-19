@@ -23,7 +23,7 @@ int mapp[MAX_N][MAX_M];						// mapp : 0: 부서짐, 1~5000 : 공격력
 // bool visit[MAX_N][MAX_M];					// 레이저 공격 경로 탐색시 사용(방문여부 저장)
 
 int attack_turn[MAX_N][MAX_M];				// 포탑의 공격 턴 저장 0 : 공격 X, 1~ : 공격했던 턴
-int dist[MAX_N][MAX_M];						// dist[a][b] : 시작점 ~ (a,b) 까지의 거리 저장
+//int dist[MAX_N][MAX_M];						// dist[a][b] : 시작점 ~ (a,b) 까지의 거리 저장
 int back_row[MAX_N][MAX_M];					// back_row[a][b] : (a,b)로 도착하기 전 위치의 row 저장, for BFS 경로 역추적
 int back_col[MAX_N][MAX_M];					// back_col[a][b] : (a,b)로 도착하기 전 위치의 col 저장, for BFS 경로 역추적
 bool is_attacked[MAX_N][MAX_M];				// 공격 당했는지 여부 저장
@@ -113,6 +113,10 @@ int main()
 				{
 					++num_of_alive;
 				}
+				
+				// 각 턴의 BFS 관련 DS, var 초기화
+				back_row[j][k] = 0;
+				back_col[j][k] = 0;
 			}
 		}
 		if (num_of_alive == 1) break;
@@ -179,8 +183,8 @@ void pick_attacker(const int turn, int* pick_row, int* pick_col)
 				{
 					// 가장 최근에 공격한 포탑(attack_turn[][]이 가장 큰걸 찾는다)
 					if (max_turn < attack_turn[k][j])
-					//if(attack_turn[k][j] !=0 && max_turn < attack_turn[k][j])
-					//if (turn > 1 && max_turn < attack_turn[k][j])
+						//if(attack_turn[k][j] !=0 && max_turn < attack_turn[k][j])
+						//if (turn > 1 && max_turn < attack_turn[k][j])
 					{
 						tar_row = k;
 						tar_col = j;
@@ -242,8 +246,8 @@ void pick_target(const int turn, const int picked_row, const int picked_col, int
 				{
 					// 공격한지 가장 오래된 포탑(attack_turn[][]이 가장 작은걸 찾는다)
 					if (min_turn > attack_turn[k][j])
-					//if(attack_turn[k][j] != 0 && min_turn > attack_turn[k][j])
-					//if (turn > 1 && min_turn > attack_turn[k][j])
+						//if(attack_turn[k][j] != 0 && min_turn > attack_turn[k][j])
+						//if (turn > 1 && min_turn > attack_turn[k][j])
 					{
 						tar_row = k;
 						tar_col = j;
@@ -278,6 +282,7 @@ bool BFS(const int str_row, const int str_col, const int dest_row, const int des
 	//0. 초기 세팅
 	queue<pair<int, int>> q_nodes;
 	bool visit[MAX_N][MAX_M] = { false, };
+	int dist[MAX_N][MAX_M] = { 0, };
 
 	visit[str_row][str_col] = true;
 	q_nodes.push({ str_row, str_col });
