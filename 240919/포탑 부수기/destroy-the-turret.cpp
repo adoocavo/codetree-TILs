@@ -172,7 +172,8 @@ void pick_attacker(const int turn, int* pick_row, int* pick_col)
 					tar_col = j;
 
 					minPower = mapp[k][j];
-					max_turn = turn;
+					//max_turn = turn;
+					max_turn = attack_turn[k][j];
 				}
 				else if (mapp[k][j] == minPower)
 				{
@@ -233,7 +234,8 @@ void pick_target(const int turn, const int picked_row, const int picked_col, int
 					tar_col = j;
 
 					maxPower = mapp[k][j];
-					min_turn = turn;
+					//min_turn = turn;
+					min_turn = attack_turn[k][j];
 				}
 
 				else if (mapp[k][j] == maxPower)
