@@ -113,7 +113,7 @@ int main()
 				{
 					++num_of_alive;
 				}
-				
+
 				// 각 턴의 BFS 관련 DS, var 초기화
 				back_row[j][k] = 0;
 				back_col[j][k] = 0;
@@ -371,6 +371,7 @@ void bomb(const int str_row, const int str_col, const int dest_row, const int de
 
 	//1. 공격 대상 포탑 :  공격자의 공격력 만큼의 피해
 	mapp[dest_row][dest_col] -= mapp[str_row][str_col];
+	is_attacked[dest_row][dest_col] = true;
 
 	//2. 
 	int surplus_row;
@@ -387,7 +388,8 @@ void bomb(const int str_row, const int str_col, const int dest_row, const int de
 		else if (surplus_col > M) surplus_col = 1;
 
 		//// 부서진 포탑 처리
-		if (mapp[surplus_row][surplus_col] == 0) continue;
+		// if (mapp[surplus_row][surplus_col] == 0) continue;
+		if (mapp[surplus_row][surplus_col] <= 0) continue;
 
 		//// 공격 대상의 주위 8방향 포탑 처리
 		mapp[surplus_row][surplus_col] -= surplus_damage;
