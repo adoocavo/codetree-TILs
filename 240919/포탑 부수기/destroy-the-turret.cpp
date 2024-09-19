@@ -82,7 +82,7 @@ int main()
 		//// 2-3. 레이저 공격 시도
 		//DFS(pick_attacker_row, pick_attacker_col, pick_tar_row, pick_tar_col);
 		razer_success = BFS(pick_attacker_row, pick_attacker_col, pick_tar_row, pick_tar_col);
-	
+
 		//// 2-4. 포탑공격 수행
 		if (!razer_success)
 		{
@@ -177,7 +177,8 @@ void pick_attacker(const int turn, int* pick_row, int* pick_col)
 				else if (mapp[k][j] == minPower)
 				{
 					// 가장 최근에 공격한 포탑(attack_turn[][]이 가장 큰걸 찾는다)
-					if (max_turn < attack_turn[k][j])
+					// if (max_turn < attack_turn[k][j])
+					if(attack_turn[k][j] !=0 && max_turn < attack_turn[k][j])
 					{
 						tar_row = k;
 						tar_col = j;
@@ -222,7 +223,7 @@ void pick_target(const int turn, const int picked_row, const int picked_col, int
 			// 부서지지 않은 포탑
 			if (mapp[k][j] > 0)
 			{
-				++num_of_alive;
+				//++num_of_alive;
 
 				// 공격력이 가장 높은 포탑
 				if (mapp[k][j] > maxPower)
@@ -237,7 +238,8 @@ void pick_target(const int turn, const int picked_row, const int picked_col, int
 				else if (mapp[k][j] == maxPower)
 				{
 					// 공격한지 가장 오래된 포탑(attack_turn[][]이 가장 작은걸 찾는다)
-					if (min_turn > attack_turn[k][j])
+					//if (min_turn > attack_turn[k][j])
+					if(attack_turn[k][j] != 0 && min_turn > attack_turn[k][j])
 					{
 						tar_row = k;
 						tar_col = j;
@@ -270,7 +272,7 @@ bool BFS(const int str_row, const int str_col, const int dest_row, const int des
 {
 	//0. 초기 세팅
 	queue<pair<int, int>> q_nodes;
-	bool visit[MAX_N][MAX_M] = {false, };
+	bool visit[MAX_N][MAX_M] = { false, };
 
 	visit[str_row][str_col] = true;
 	q_nodes.push({ str_row, str_col });
@@ -307,7 +309,7 @@ bool BFS(const int str_row, const int str_col, const int dest_row, const int des
 			visit[nxt_row][nxt_col] = true;
 			q_nodes.push({ nxt_row , nxt_col });
 		}
-	
+
 		// BFS 종료시키기
 		if (dist[dest_row][dest_col] != 0) break;
 	}
@@ -336,7 +338,7 @@ void back_BFS(const int str_row, const int str_col, const int dest_row, const in
 
 		int nxt_row = back_row[cur_node.first][cur_node.second];
 		int nxt_col = back_col[cur_node.first][cur_node.second];
-		
+
 		if (nxt_row == 0 || nxt_col == 0) break;
 		if (nxt_row == str_row && nxt_col == str_col) break;
 
