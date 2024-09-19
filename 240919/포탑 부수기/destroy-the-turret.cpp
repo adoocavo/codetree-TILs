@@ -172,13 +172,14 @@ void pick_attacker(const int turn, int* pick_row, int* pick_col)
 					tar_col = j;
 
 					minPower = mapp[k][j];
-					//max_turn = turn;
+					max_turn = turn;
 				}
 				else if (mapp[k][j] == minPower)
 				{
 					// 가장 최근에 공격한 포탑(attack_turn[][]이 가장 큰걸 찾는다)
-					// if (max_turn < attack_turn[k][j])
-					if(attack_turn[k][j] !=0 && max_turn < attack_turn[k][j])
+					if (max_turn < attack_turn[k][j])
+					//if(attack_turn[k][j] !=0 && max_turn < attack_turn[k][j])
+					//if (turn > 1 && max_turn < attack_turn[k][j])
 					{
 						tar_row = k;
 						tar_col = j;
@@ -232,14 +233,15 @@ void pick_target(const int turn, const int picked_row, const int picked_col, int
 					tar_col = j;
 
 					maxPower = mapp[k][j];
-					//min_turn = turn;
+					min_turn = turn;
 				}
 
 				else if (mapp[k][j] == maxPower)
 				{
 					// 공격한지 가장 오래된 포탑(attack_turn[][]이 가장 작은걸 찾는다)
-					//if (min_turn > attack_turn[k][j])
-					if(attack_turn[k][j] != 0 && min_turn > attack_turn[k][j])
+					if (min_turn > attack_turn[k][j])
+					//if(attack_turn[k][j] != 0 && min_turn > attack_turn[k][j])
+					//if (turn > 1 && min_turn > attack_turn[k][j])
 					{
 						tar_row = k;
 						tar_col = j;
@@ -251,6 +253,7 @@ void pick_target(const int turn, const int picked_row, const int picked_col, int
 			}
 		}
 	}
+
 
 	//2. 선정된 포탑 관련 처리
 	//mapp[tar_row][tar_col] += (N + M);			// 선정된 포탑의 공격력 N+M 증가
