@@ -13,7 +13,7 @@ int N;			//input row
 int M;			//input col
 int K;			// 게임 턴 횟수
 
-int num_of_alive;			// 부서지지 않은 포탑 개수
+//int num_of_alive;			// 부서지지 않은 포탑 개수
 bool razer_success;			// 레이저 공격 성공 여부 확인
 
 int mapp[MAX_N][MAX_M];						// mapp : 0: 부서짐, 1~5000 : 공격력
@@ -24,7 +24,7 @@ int back_col[MAX_N][MAX_M];					// back_col[a][b] : (a,b)로 도착하기 전 �
 bool is_attacked[MAX_N][MAX_M];				// 공격 당했는지 여부 저장
 
 
-queue<pair<int, int>> trace;				// 공격 무관포탑 저장
+//queue<pair<int, int>> trace;				// 공격 무관포탑 저장
 
 // 우 / 하 / 좌 / 상 탐색
 int off_row[4] = { 0, 1, 0, -1 };
@@ -86,7 +86,7 @@ int main()
 		}
 
 		//// 2-5. 포탑 재정비
-		num_of_alive = 0;
+		int num_of_alive = 0;
 		for (int j = 1; j <= N; ++j)
 		{
 			for (int k = 1; k <= M; ++k)
@@ -153,8 +153,8 @@ void pick_attacker(const int turn, int* pick_row, int* pick_col)
 
 	int minPower = 5000 + 1;	// 포탑 공격력 최소값
 
-	//int min_turn_offset = 1000;
-	int max_turn = 0;			// 비교대상 포탑들의 최근 공격 턴 중 max 저장
+	//int max_turn = 0;			// 비교대상 포탑들의 최근 공격 턴 중 max 저장
+	int max_turn;
 
 	//1. 공격할 포탑 선정 조건 고려해서 pick
 	for (int j = M; j >= 1; --j)		//col
@@ -164,7 +164,7 @@ void pick_attacker(const int turn, int* pick_row, int* pick_col)
 			// 부서지지 않은 포탑
 			if (mapp[k][j] > 0)
 			{
-				++num_of_alive;
+				//++num_of_alive;
 
 				// 공격력이 가장 낮은 포탑
 				if (mapp[k][j] < minPower)
@@ -212,8 +212,8 @@ void pick_target(const int turn, const int picked_row, const int picked_col, int
 {
 	int tar_row, tar_col;		// 공격 대상 포탑
 	int maxPower = 0;			// 포탑 공격력 최대값
-	//int max_turn_offset = 0;
-	int min_turn = 1000 + 1;
+	//int min_turn = 1000 + 1;
+	int min_turn;
 
 	//1. 공격할 포탑 선정 조건 고려해서 pick
 	for (int j = 1; j <= M; ++j)		//col
@@ -387,6 +387,7 @@ void bomb(const int str_row, const int str_col, const int dest_row, const int de
 		//// 부서진 포탑 처리
 		// if (mapp[surplus_row][surplus_col] == 0) continue;
 		if (mapp[surplus_row][surplus_col] <= 0) continue;
+		if (surplus_row == str_row && surplus_col == str_col) continue;
 
 		//// 공격 대상의 주위 8방향 포탑 처리
 		mapp[surplus_row][surplus_col] -= surplus_damage;
