@@ -13,11 +13,9 @@ int K;		// input 게임 시간(1초당 게임 1회)
 int exit_row, exit_col;		//출구 좌표
 
 int mapp[MAX_N][MAX_N];					// mapp : 0(빈칸, 이동 가능), -1(사람), 1~9(내구도), -11 : 출구
-// bool visit[MAX_N][MAX_N];				// visit : true(참가자 존재), false(참가자 x)
-// int visit[MAX_N][MAX_N];				// 0(참가자 존재 X), 1 이상(참가자 존재)
 int sum_of_move;						// 각 참가자들이 이동할때마다 +1
 int num_of_alive;						//각 참가자들이 탈출할때마다 -1
-// queue<pair<int, int>> q_runnersPos;		// 각 참가자들의 위치 저장 
+
 
 // 상 / 하 / 좌 / 우
 int off_row[4] = { -1, 1, 0, 0 };
@@ -44,14 +42,13 @@ int main()
 			cin >> mapp[i][j];				//input 미로 정보
 		}
 	}
+
 	int input_row, input_col;
 	for (int i = 0; i < M; ++i)
 	{
 		cin >> input_row >> input_col;		//input 참가자 좌표
-		mapp[input_row][input_col] = -1;
-		
-		//visit[input_row][input_col] += 1;
-		//q_runnersPos.push({ input_row , input_col });
+		//mapp[input_row][input_col] = -1;
+		mapp[input_row][input_col] += -1;
 	}
 	cin >> exit_row >> exit_col;			//input 출구 좌표
 	mapp[exit_row][exit_col] = -11;
@@ -99,7 +96,7 @@ void move_runners(void)
 			if (mapp[i][j] <= -1 && mapp[i][j] > -11)		//mapp에 사람 있는 칸
 			{
 				int cur_min_dist = abs(i - exit_row) + abs(j - exit_col);
-				
+
 				// 2. 이동할 위치 탐색
 				int tar_nxt_row, tar_nxt_col;
 				bool is_moved = false;
@@ -107,7 +104,7 @@ void move_runners(void)
 				{
 					int nxt_row = i + off_row[k];
 					int nxt_col = j + off_col[k];
-					
+
 					// 제한0
 					if (nxt_row < 1 || nxt_row > N || nxt_col < 1 || nxt_col > N) continue;
 					// 제한1
@@ -141,11 +138,11 @@ void move_runners(void)
 					//tmp_new_mapp[nxt_row][nxt_col] += mapp[i][j];
 					tmp_new_mapp[tar_nxt_row][tar_nxt_col] += mapp[i][j];
 				}
-			
+
 			}
-		
+
 		}
-	
+
 	}
 
 	//4. tmp_new_mapp -> mapp
@@ -163,10 +160,6 @@ void move_runners(void)
 
 void rotate_maze(void)
 {
-	//int str_row;	// 회전시킬 정사각형의 좌상단 row
-	//int str_col;	// 회전시킬 정사각형의 좌상단 col
-	//int select_N;	// 회전시킬 정사각형의 크기
-
 	//1. 회전시킬 정사각형 잡기
 	for (int i = 2; i <= N; ++i)		// select_N
 	{
@@ -218,7 +211,6 @@ bool is_possible_rotate(const int str_row, const int str_col, const int select_N
 void rotate(const int str_row, const int str_col, const int select_N)
 {
 	//0. 셋팅
-	//int new_mapp[MAX_N][MAX_N] = { 0, };
 	int tmp_new_mapp[MAX_N][MAX_N] = { 0, };
 	for (int i = 1; i <= N; ++i)
 	{
@@ -228,26 +220,12 @@ void rotate(const int str_row, const int str_col, const int select_N)
 		}
 	}
 
-	//1. 90도 회전 수행 
-	/*
-	for (int i = str_row; i <= (str_row + select_N - 1); ++i)
-	{
-		for (int j = str_col; j <= (str_col + select_N - 1); ++j)
-		{
-			//new_mapp[i][j] = mapp[N - j + 1][i];
-			tmp_new_mapp[i][j] = mapp[select_N - j + 1][i];
 
-			//회전된 벽은 내구도가 1씩 감소
-			//if (tmp_new_mapp[i][j] >= 1)	tmp_new_mapp[i][j] -= 1;
-
-		}
-	}
-	*/
 	for (int i = 0; i < select_N; ++i)
 	{
 		for (int j = 0; j < select_N; ++j)
 		{
-			tmp_new_mapp[str_row+i][str_col+j] = mapp[str_row + select_N - j - 1][str_col + i];			//1. 90도 회전 수행 
+			tmp_new_mapp[str_row + i][str_col + j] = mapp[str_row + select_N - j - 1][str_col + i];			//1. 90도 회전 수행 
 			//if(tmp_new_mapp[str_row + i][str_col + j] >= 1) tmp_new_mapp[i][j] -= 1;					//2. 회전된 벽 내구도 1 감소 
 			if (tmp_new_mapp[str_row + i][str_col + j] >= 1) tmp_new_mapp[str_row + i][str_col + j] -= 1;
 			else if (tmp_new_mapp[str_row + i][str_col + j] == -11)										//3. 출구 위치 변경 반영	
@@ -267,39 +245,5 @@ void rotate(const int str_row, const int str_col, const int select_N)
 		}
 	}
 
-
-	/*
-	//2. 회전된 벽 내구도 1 감소 
-	for (int i = str_row; i <= (str_row + select_N - 1); ++i)
-	{
-		for (int j = str_col; j <= (str_col + select_N - 1); ++j)
-		{
-			//회전된 벽은 내구도가 1씩 감소
-			if (tmp_new_mapp[i][j] >= 1)	tmp_new_mapp[i][j] -= 1;
-			else if (tmp_new_mapp[i][j] == -11)
-			{
-			
-			}
-		}
-	}
-
-	//3. 회전 반영
-	for (int i = str_row; i <= (str_row + select_N - 1); ++i)
-	{
-		for (int j = str_col; j <= (str_col + select_N - 1); ++j)
-		{
-			mapp[i][j] = tmp_new_mapp[i][j];
-			// visit[i][j] = new_visit[i][j];
-
-			//if (mapp[i][j] == -1)
-			if (mapp[i][j] == -11)
-			{
-				exit_row = i;
-				exit_col = j;
-			}
-
-		}
-	}
-	*/
 	return;
 }
