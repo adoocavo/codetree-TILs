@@ -222,63 +222,10 @@ void rotate()
 				//tmp_mapp[str_row + j][str_col + k] = mapp[str_col + stan_col - k - 1][str_col + j];
 				//tmp_mapp[str_row + j][str_col + k] = mapp[str_col + (stan_col - 1) - k - 1][str_col + j];
 				//tmp_mapp[str_row + j][str_col + k] = mapp[str_row + (stan_col - 2) - k - 1][str_col + j];
-				tmp_mapp[str_row + j][str_col + k] = mapp[str_row + (stan_col - 2) - k][str_col + j];
+				tmp_mapp[str_row + j][str_col + k] = mapp[str_row + (stan_row - 2) - k][str_col + j];
 			}
 		}
 	}
-
-
-
-	/*
-	int str_row, end_row;
-	int str_col, end_col;
-	//2. 나머지 :  각각 개별적으로 시계 방향으로 90'씩 회전
-	//// (1)번 사각형
-	str_row = 1; end_row = stan_row - 1;
-	str_col = 1; end_col = stan_col - 1;
-	for (int i = str_row; i <= end_row; ++i)
-	{
-		for (int j = str_col; j <= end_col; ++j)
-		{
-			tmp_mapp[i][j] = mapp[(end_row - i) + 1][j];
-		}
-	}
-
-	//// (2)번 사각형
-	str_row = 1; end_row = stan_row - 1;
-	str_col = stan_col + 1; end_col = n;
-	for (int i = str_row; i <= end_row; ++i)
-	{
-		for (int j = str_col; j <= end_col; ++j)
-		{
-			tmp_mapp[i][j] = mapp[(end_row - i) + 1][j];
-		}
-	}
-
-	//// (3)번 사각형
-	str_row = stan_row + 1; end_row = n;
-	str_col = 1; end_col = stan_col - 1;
-	for (int i = str_row; i <= end_row; ++i)
-	{
-		for (int j = str_col; j <= end_col; ++j)
-		{
-			tmp_mapp[i][j] = mapp[(end_row - i) + 1][j];
-		}
-	}
-
-
-	//// (4)번 사각형
-	str_row = stan_row + 1; end_row = n;
-	str_col = stan_col + 1; end_col = n;
-	for (int i = str_row; i <= end_row; ++i)
-	{
-		for (int j = str_col; j <= end_col; ++j)
-		{
-			tmp_mapp[i][j] = mapp[(end_row - i) + 1][j];
-		}
-	}
-	*/
-
 
 	//3. tmp -> mapp 
 	for (int i = 1; i <= n; ++i)
