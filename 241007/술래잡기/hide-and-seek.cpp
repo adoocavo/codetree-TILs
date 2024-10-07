@@ -85,7 +85,7 @@ int main()
 
 	int in_x2, in_y2;
 	for (int i = 1; i <= h; ++i)
-	//for (int i = 1; i < h; ++i)
+		//for (int i = 1; i < h; ++i)
 	{
 		cin >> in_x2 >> in_y2;
 
@@ -295,7 +295,7 @@ void cather_move(const int game_turn)
 {
 	//1. forward ? reverse ? 확인
 	//forward
-	if (forward_facing == true)				
+	if (forward_facing == true)
 	{
 		int cur_direc = catcher_forw_direcs[catcher_pos.first][catcher_pos.second];
 		//mapp[catcher_pos.first][catcher_pos.second] = 0;
@@ -343,7 +343,7 @@ void cather_move(const int game_turn)
 		{
 			catcher_direc = catcher_rev_direcs[nxt_row][nxt_col];
 		}
-	
+
 		//3. catcher_pos, mapp 수정
 		mapp[catcher_pos.first][catcher_pos.second] = 0;
 		catcher_pos.first = nxt_row;
@@ -382,20 +382,9 @@ void cather_move(const int game_turn)
 	}
 
 	//5. 술래 점수 획득
-	catcher_score = game_turn * num_of_catch;
+	//catcher_score = game_turn * num_of_catch;
+	catcher_score += game_turn * num_of_catch;
 
 	return;
 
-	/*
-	//2. catcher_forw_direcs[현재 술래 위치][] || catcher_rev_direcs[현재 술래 위치][]  -> 한 칸 이동
-	//// => (1,1) || (중심, 중심) -> forward_facing 수정
-	//// => catcher_pos, mapp 수정
-	
-
-
-	//3. 시야 내에 도망자 탐색
-
-	//4. 잡힌 도망자 처리
-	//// => is_alive, catcher_score 수정
-	*/
 }
