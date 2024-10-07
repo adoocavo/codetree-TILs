@@ -348,7 +348,7 @@ void cather_move(const int game_turn)
 	//// => 나무가 놓여 있는 칸 확인
 	//// => is_alive, runner_pos 수정
 	int num_of_catch = 0;			// 현재 턴에서 잡힌 도망자의 수
-	set<int> erase_idx;				// 잡힌 도망자들의 idx 저장
+	//set<int> erase_idx;				// 잡힌 도망자들의 idx 저장
 	for (int i = 0; i < 3; ++i)
 	{
 		// 시야 범위 내의 좌표 구하기
@@ -368,18 +368,19 @@ void cather_move(const int game_turn)
 					++num_of_catch;
 					is_alive[it.first] = false;
 					//runner_pos.erase(it.first);
-					erase_idx.insert(it.first);
+					//erase_idx.insert(it.first);
 				}
 			}
 		}
 	}
 
+	/*
 	// 사라질 대상들 없애기	
 	for (auto it : erase_idx)
 	{
 		runner_pos.erase(it);
 	}
-
+	*/
 
 
 	//5. 술래 점수 획득
