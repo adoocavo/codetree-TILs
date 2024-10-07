@@ -43,7 +43,9 @@ void init_catcher_direc(void);
 void cather_move(const int game_turn);
 
 // 좌 우 하 상 ( 0, 1, 2, 3) for 도망자
-int off_row[] = { 0, 0, -1, 1 };
+//int off_row[] = { 0, 0, -1, 1 };
+//int off_col[] = { -1, 1, 0, 0 };
+int off_row[] = { 0, 0, 1, -1 };
 int off_col[] = { -1, 1, 0, 0 };
 
 // 상우하좌 순서대로 넣어줍니다. for 술래
@@ -141,11 +143,10 @@ void runners_move()
 		int c_col = runner_pos[i].second;		//현재 움직이는 도망자 col
 		int c_direc = runner_direc[i];			//현재 움직이는 도망자 이동방향
 
-		is_moved.insert(i);
-
+		//is_moved.insert(i);
 		int nxt_row = c_row + off_row[c_direc];
 		int nxt_col = c_col + off_col[c_direc];
-
+		
 
 		////2. 움직이는 동작 이후 상황
 		// 격자를 벗어나는 경우
@@ -171,12 +172,13 @@ void runners_move()
 			// 술래 존재 여부에 따라 이동 결정하기
 			if (mapp[n_row][n_col] == 1)
 			{
-				is_moved.erase(cur_idx);
+				//is_moved.erase(cur_idx);
 				continue;
 			}
 			else
 			{
 				tmp_pos[cur_idx] = { n_row , n_col };
+				is_moved.insert(cur_idx);
 			}
 		}
 		// 격자를 벗어나지 않는 경우
@@ -184,12 +186,13 @@ void runners_move()
 		{
 			if (mapp[nxt_row][nxt_col] == 1)
 			{
-				is_moved.erase(cur_idx);
+				//is_moved.erase(cur_idx);
 				continue;
 			}
 			else
 			{
 				tmp_pos[cur_idx] = { nxt_row , nxt_col };
+				is_moved.insert(cur_idx);
 			}
 		}
 	}
@@ -211,13 +214,6 @@ void runners_move()
 // catcher_forw_direcs, catcher_rev_direcs에 술래 이동방향 저장
 void init_catcher_direc()
 {
-	/*
-	// 상우하좌 순서대로 넣어줍니다.
-	//// (0 <-> 2) (1 <-> 3)
-	int dx[4] = { -1, 0, 1,  0 };
-	int dy[4] = { 0 , 1, 0, -1 };
-	*/
-
 
 	// 시작 위치와 방향, 해당 방향으로 이동할 횟수를 설정합니다. 
 	//// 1회 이동마다 : 이동방향이 바뀜
@@ -228,12 +224,6 @@ void init_catcher_direc()
 
 	// flag 역할 : move_cnt == 2 -> ++move_num, move_cnt = 0 으로 초기화
 	int move_cnt = 0;
-
-	/*
-	// queue : 방향 저장해야하는 좌표 위치 저장
-	queue<pair<int, int>> q_nodes;
-	q_nodes.push({ cur_row, cur_col });
-	*/
 
 	while (1)
 	{
@@ -357,6 +347,7 @@ void cather_move(const int game_turn)
 	//// => 나무가 놓여 있는 칸 확인
 	//// => is_alive, runner_pos 수정
 	int num_of_catch = 0;			// 현재 턴에서 잡힌 도망자의 수
+	set<int> erase_idx;				// 잡힌 도망자들의 idx 저장
 	for (int i = 0; i < 3; ++i)
 	{
 		// 시야 범위 내의 좌표 구하기
@@ -376,10 +367,18 @@ void cather_move(const int game_turn)
 					++num_of_catch;
 					is_alive[it.first] = false;
 					//runner_pos.erase(it.first);
+					erase_idx.insert(it.first);
 				}
 			}
 		}
 	}
+	// 사라질 대상들 없애기	
+	for (auto it : erase_idx)
+	{
+		runner_pos.erase(it);
+	}
+
+
 
 	//5. 술래 점수 획득
 	//catcher_score = game_turn * num_of_catch;
