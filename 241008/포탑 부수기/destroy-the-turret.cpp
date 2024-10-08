@@ -15,6 +15,7 @@ map<pair<int, int>, int> top_force;		// 특정 위치 포탑의 공격력
 map<pair<int, int>, bool> is_alive;		// 특정 위치 포탑의 생존 여부
 map<pair<int, int>, int> last_attack;	// 특정 위치 포탑의 마지막 공격 턴
 map<pair<int, int>, int> is_related;	// 특정 위치 포탑의 현재 턴에서 공격과 연관성 (턴 단위로 초기화)
+set<pair<int, int>> is_related_set;		
 
 int N, M, K;
 
@@ -69,21 +70,28 @@ int main()
 	//2. 게임 수행
 	for (int i = 1; i <= K; ++i)
 	{
-		////0. 
+		////0. 게임 전 초기화
+		is_related_set.clear();
+		alive_cnt = 0;
+
+		/*
 		for (auto it_clear : is_related)
 		{
 			is_related[{it_clear.first.first, it_clear.first.second}] = false;
 		}
+		*/
 
 		////1. 공격자 선정
 		pair<int, int> attacker_top = select_attacker();
-		is_related[{attacker_top.first, attacker_top.second}] = true;
+		is_related_set.insert({ attacker_top.first, attacker_top.second });
+		//is_related[{attacker_top.first, attacker_top.second}] = true;
 		////// 최근 공격 턴 업데이트
 		last_attack[{attacker_top.first, attacker_top.second}] = i;
 
 		////2-1. 공격대상 선정
 		pair<int, int> attacked_top = select_attacked(attacker_top);
-		is_related[{attacked_top.first, attacked_top.second}] = true;
+		is_related_set.insert({ attacked_top.first, attacked_top.second });
+		//is_related[{attacked_top.first, attacked_top.second}] = true;
 
 		////2-2. 공격자 -> 공격대상 공격 수행
 		if (BFS_attack(attacker_top, attacked_top) == true)		//레이저 공격
@@ -109,25 +117,33 @@ int main()
 
 		////4-1. 포탑 정비	
 		////// => is_alive[] == true && is_related[] == false -> 공격력이 1씩 증가
-		alive_cnt = 0;
+		//alive_cnt = 0;
 		for (auto it_top : is_alive)
 		{
 			if (is_alive[{it_top.first.first, it_top.first.second}])
 			{
 				++alive_cnt;
+				if (is_related_set.find({ it_top.first.first, it_top.first.second }) == is_related_set.end())		//공격과 무관
+				{
+					top_force[{it_top.first.first, it_top.first.second}] += 1;
+				}
+				/*
 				if (!is_related[{it_top.first.first, it_top.first.second}])
 				{
 					top_force[{it_top.first.first, it_top.first.second}] += 1;
 				}
+				*/
 			}
 
 		}
 
+		/*
 		////4-2. 초기화 
 		for (auto it_clear : is_related)
 		{
 			is_related[{it_clear.first.first, it_clear.first.second}] = false;
 		}
+		*/
 
 		////4-3.
 		if (alive_cnt == 1)	break;
@@ -176,66 +192,8 @@ pair<int, int> select_attacker(void)
 			latest = last_attack[{it.first.first, it.first.second}];
 			min_force = top_force[{it.first.first, it.first.second}];
 			tar_top = { it.first.first, it.first.second };
-		
+
 		}
-
-
-		/*
-		//if (is_alive[{it.first, it.second}])
-		if (is_alive[{it.first.first, it.first.second}])
-		{
-			// 제한 1 : 공격력이 가장 낮은 포탑이 가장 약한 포탑
-			if (top_force[{it.first.first, it.first.second}] < min_force)
-			{
-				max_c = it.first.second;
-				max_sum_of_rc = (it.first.first + it.first.second);
-				latest = last_attack[{it.first.first, it.first.second}];
-				min_force = top_force[{it.first.first, it.first.second}];
-				tar_top = { it.first.first, it.first.second };
-			}
-
-			// 제한 2 : 만약 공격력이 가장 낮은 포탑이 2개 이상이라면 -> 가장 최근에 공격한 포탑이 가장 약한 포탑
-			else if (top_force[{it.first.first, it.first.second}] == min_force)
-			{
-				if (last_attack[{it.first.first, it.first.second}] > latest)
-				{
-					max_c = it.first.second;
-					max_sum_of_rc = (it.first.first + it.first.second);
-					latest = last_attack[{it.first.first, it.first.second}];
-					min_force = top_force[{it.first.first, it.first.second}];
-					tar_top = { it.first.first, it.first.second };
-				}
-
-				// 제한 3 : '제한 2'의 포탑이 2개 이상 -> 각 포탑 위치의 행과 열의 합이 가장 큰 포탑이 가장 약한 포탑
-				else if (last_attack[{it.first.first, it.first.second}] == latest)
-				{
-					if ((it.first.first + it.first.second) > max_sum_of_rc)
-					{
-						max_c = it.first.second;
-						max_sum_of_rc = (it.first.first + it.first.second);
-						latest = last_attack[{it.first.first, it.first.second}];
-						min_force = top_force[{it.first.first, it.first.second}];
-						tar_top = { it.first.first, it.first.second };
-					}
-
-					// 제한 4 : '제한 3'의 포탑이 2개 이상 -> 각 포탑 위치의 열 값이 가장 큰 포탑이 가장 약한 포탑
-					else if ((it.first.first + it.first.second) == max_sum_of_rc)
-					{
-						if (max_c < it.first.second)
-						{
-							max_c = it.first.second;
-							max_sum_of_rc = (it.first.first + it.first.second);
-							latest = last_attack[{it.first.first, it.first.second}];
-							min_force = top_force[{it.first.first, it.first.second}];
-							tar_top = { it.first.first, it.first.second };
-
-						}
-					}
-				}
-
-			}
-		}
-		*/
 	}
 
 	// 동작2 : 공격자로 선정된 포탑의 공격력이, N+M만큼 증가
@@ -268,65 +226,8 @@ pair<int, int> select_attacked(const pair<int, int> attacker_top)
 			latest = last_attack[{it.first.first, it.first.second}];
 			max_force = top_force[{it.first.first, it.first.second}];
 			tar_top = { it.first.first, it.first.second };
-		
+
 		}
-
-
-		/*
-		if (is_alive[{it.first.first, it.first.second}])
-		{
-			// 제한 1 : 공격력이 가장 높은 포탑이 가장 강한 포탑
-			if (top_force[{it.first.first, it.first.second}] > max_force)
-			{
-				min_c = it.first.second;
-				min_sum_of_rc = (it.first.first + it.first.second);
-				latest = last_attack[{it.first.first, it.first.second}];
-				max_force = top_force[{it.first.first, it.first.second}];
-				tar_top = { it.first.first, it.first.second };
-			}
-
-			// 제한 2 : 만약 공격력이 가장 높은 포탑이 2개 이상 -> 공격한지 가장 오래된 포탑이 가장 강한 포탑
-			else if (top_force[{it.first.first, it.first.second}] == max_force)
-			{
-				if (last_attack[{it.first.first, it.first.second}] < latest)
-				{
-					min_c = it.first.second;
-					min_sum_of_rc = (it.first.first + it.first.second);
-					latest = last_attack[{it.first.first, it.first.second}];
-					max_force = top_force[{it.first.first, it.first.second}];
-					tar_top = { it.first.first, it.first.second };
-				}
-
-				// 제한 3 : '제한 2'의 포탑이 2개 이상 -> 각 포탑 위치의 행과 열의 합이 가장 작은 포탑이 가장 강한 포탑
-				else if (last_attack[{it.first.first, it.first.second}] == latest)
-				{
-					if ((it.first.first + it.first.second) < min_sum_of_rc)
-					{
-						min_c = it.first.second;
-						min_sum_of_rc = (it.first.first + it.first.second);
-						latest = last_attack[{it.first.first, it.first.second}];
-						max_force = top_force[{it.first.first, it.first.second}];
-						tar_top = { it.first.first, it.first.second };
-					}
-
-					// 제한 4 : '제한 3'의 포탑이 2개 이상 ->  각 포탑 위치의 열 값이 가장 작은 포탑이 가장 강한 포탑
-					else if ((it.first.first + it.first.second) == min_sum_of_rc)
-					{
-						if (min_c > it.first.second)
-						{
-							min_c = it.first.second;
-							min_sum_of_rc = (it.first.first + it.first.second);
-							latest = last_attack[{it.first.first, it.first.second}];
-							max_force = top_force[{it.first.first, it.first.second}];
-							tar_top = { it.first.first, it.first.second };
-
-						}
-					}
-				}
-
-			}
-		}
-		*/
 	}
 
 	return tar_top;
@@ -426,7 +327,8 @@ void BFS_back(const pair<int, int> attacker_top, const pair<int, int> attacked_t
 		//// target 처리 : damage
 		top_force[{tar_node.first, tar_node.second}] -= damage;
 		//// is_related 처리
-		is_related[{tar_node.first, tar_node.second}] = true;
+		//is_related[{tar_node.first, tar_node.second}] = true;
+		is_related_set.insert({ tar_node.first, tar_node.second });
 
 		//// nxt 구해서 push
 		q_nodes.push({ back[tar_node.first][tar_node.second].first, back[tar_node.first][tar_node.second].second });
@@ -459,9 +361,9 @@ void bomb(const pair<int, int> attacker_top, const pair<int, int> attacked_top)
 		//// 공격 처리
 		top_force[{tar_r, tar_c}] -= attack_power2;
 		//// is_related 처리
-		is_related[{tar_r, tar_c}] = true;
-
+		//is_related[{tar_r, tar_c}] = true;
+		is_related_set.insert({ tar_r, tar_c });
 	}
-
+	
 	return;
 }
