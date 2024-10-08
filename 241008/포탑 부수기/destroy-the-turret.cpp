@@ -21,7 +21,7 @@ int N, M, K;
 //공격 대상 선정 
 pair<int, int> select_attacker();
 //공격 받는 대상 선정 
-pair<int, int> select_attacked();
+pair<int, int> select_attacked(const pair<int, int> attacker_top);
 //공격자가 공격 수행
 bool BFS_attack(const pair<int, int> attacker_top, const pair<int, int> attacked_top);
 // BFS 최단경로 역추적 -> 경로 내 포탑들 공격력 수정
@@ -82,7 +82,7 @@ int main()
 		last_attack[{attacker_top.first, attacker_top.second}] = i;
 
 		////2-1. 공격대상 선정
-		pair<int, int> attacked_top = select_attacked();
+		pair<int, int> attacked_top = select_attacked(attacker_top);
 		is_related[{attacked_top.first, attacked_top.second}] = true;
 
 		////2-2. 공격자 -> 공격대상 공격 수행
@@ -120,13 +120,7 @@ int main()
 					top_force[{it_top.first.first, it_top.first.second}] += 1;
 				}
 			}
-			/*
-			if (is_alive[{it_top.first.first, it_top.first.second}] &&
-				!is_related[{it_top.first.first, it_top.first.second}])
-			{
-				top_force[{it_top.first.first, it_top.first.second}] += 1;
-			}
-			*/
+
 		}
 
 		////4-2. 초기화 
@@ -231,7 +225,7 @@ pair<int, int> select_attacker(void)
 	return tar_top;
 }
 
-pair<int, int> select_attacked(void)
+pair<int, int> select_attacked(const pair<int, int> attacker_top)
 {
 	int max_force = -1;
 	pair<int, int> tar_top;			// 선정되는 공격대상 포탑 저장 -> return 
@@ -242,6 +236,9 @@ pair<int, int> select_attacked(void)
 	for (auto it : top_force)
 	{
 		//if (is_alive[{it.first, it.second}])
+		// 제한0 : 자신을 제외
+		if (it.first.first == attacker_top.first && it.first.second == attacker_top.second) continue;
+
 		if (is_alive[{it.first.first, it.first.second}])
 		{
 			// 제한 1 : 공격력이 가장 높은 포탑이 가장 강한 포탑
@@ -356,44 +353,12 @@ bool BFS_attack(const pair<int, int> attacker_top, const pair<int, int> attacked
 			if (visit[nxt_row][nxt_col]) continue;
 			////제한 1 : 부서진 포탑이 있는 위치는 지날 수 없습니다.
 			if (is_alive[{nxt_row, nxt_col}] == false) continue;
-			
-			//// nxt 처리(visit, queue) + 역추적 위한 좌표 처리
-			visit[nxt_row][nxt_col] = true;
-			q_nodes.push({ nxt_row, nxt_col });
-
-			back[nxt_row][nxt_col] = { cur_node.first , cur_node.second };
-
-			/*
-			int nxt_row = cur_node.first + off_row[i];
-			int nxt_col = cur_node.second + off_col[i];
-
-			////제한 0 : 이미 방문한 위치는 방문 불가 
-			if (visit[nxt_row][nxt_col]) continue;
-
-			////제한 1 : 부서진 포탑이 있는 위치는 지날 수 없습니다.
-			if (is_alive[{nxt_row, nxt_col}] == false) continue;
-
-			////제한 2 : 가장자리에서 막힌 방향으로 진행하고자 한다면, 반대편으로 나옵니다.
-			if (nxt_row < 1 || nxt_row > N || nxt_col < 1 || nxt_col > M)
-			{
-				
-				//nxt_row %= N;
-				//nxt_col %= M;
-				
-				
-				//nxt_row = (nxt_row + N) % N;
-				//nxt_col = (nxt_col + M) % M;
-				
-				//nxt_row = ((nxt_row - 1 + N) % N) + 1;
-				//nxt_col = ((nxt_col - 1 + M) % M) + 1;
-			}
 
 			//// nxt 처리(visit, queue) + 역추적 위한 좌표 처리
 			visit[nxt_row][nxt_col] = true;
 			q_nodes.push({ nxt_row, nxt_col });
 
 			back[nxt_row][nxt_col] = { cur_node.first , cur_node.second };
-			*/
 		}
 
 	}
@@ -405,8 +370,7 @@ void BFS_back(const pair<int, int> attacker_top, const pair<int, int> attacked_t
 {
 	//0.
 	queue<pair<int, int>> q_nodes;
-	//q_nodes.push({ attacked_top.first, attacked_top.second });
-	// back[attacked_top.first][attacked_top.second].first, back[attacked_top.first][attacked_top.second].second
+
 	q_nodes.push({ back[attacked_top.first][attacked_top.second].first, back[attacked_top.first][attacked_top.second].second });
 
 	//1. 
@@ -459,29 +423,6 @@ void bomb(const pair<int, int> attacker_top, const pair<int, int> attacked_top)
 		//// is_related 처리
 		is_related[{tar_r, tar_c}] = true;
 
-		/*
-		int tar_r = attacked_top.first + dr[i];
-		int tar_c = attacked_top.second + dc[i];
-
-		// 제한1 : 만약 가장자리에 포탄이 떨어졌다면, 위에서의 레이저 이동처럼 포탄의 추가 피해가 반대편 격자에 미치게 됩
-		if (tar_r < 1 || tar_r > N || tar_c < 1 || tar_c > M)
-		{
-			
-			//tar_r %= N;
-			//tar_c %= M;
-			
-			
-			//tar_r = (tar_r+N) % N;
-			//tar_c = (tar_c + M) % M;
-			
-			tar_r = ((tar_r - 1 + N) % N) + 1;
-			tar_c = ((tar_c - 1 + M) % M) + 1;
-		}
-	
-		top_force[{tar_r, tar_c}] -= attack_power2;
-		//// is_related 처리
-		is_related[{tar_r, tar_c}] = true;
-		*/
 	}
 
 	return;
