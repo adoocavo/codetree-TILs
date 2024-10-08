@@ -163,6 +163,24 @@ pair<int, int> select_attacker(void)
 	//동작1 : 부서지지 않은 포탑 중 가장 약한 포탑 선택
 	for (auto it : top_force)
 	{
+
+		if (!is_alive[{it.first.first, it.first.second}])	continue;
+		if ((top_force[{it.first.first, it.first.second}] < min_force) ||
+			(((top_force[{it.first.first, it.first.second}] == min_force) && (last_attack[{it.first.first, it.first.second}] > latest))) ||
+			(((top_force[{it.first.first, it.first.second}] == min_force) && (last_attack[{it.first.first, it.first.second}] == latest)) && (it.first.first + it.first.second) > max_sum_of_rc) ||
+			(((top_force[{it.first.first, it.first.second}] == min_force) && (last_attack[{it.first.first, it.first.second}] == latest)) && ((it.first.first + it.first.second) == max_sum_of_rc) && max_c < it.first.second)
+			)
+		{
+			max_c = it.first.second;
+			max_sum_of_rc = (it.first.first + it.first.second);
+			latest = last_attack[{it.first.first, it.first.second}];
+			min_force = top_force[{it.first.first, it.first.second}];
+			tar_top = { it.first.first, it.first.second };
+		
+		}
+
+
+		/*
 		//if (is_alive[{it.first, it.second}])
 		if (is_alive[{it.first.first, it.first.second}])
 		{
@@ -217,6 +235,7 @@ pair<int, int> select_attacker(void)
 
 			}
 		}
+		*/
 	}
 
 	// 동작2 : 공격자로 선정된 포탑의 공격력이, N+M만큼 증가
@@ -238,7 +257,22 @@ pair<int, int> select_attacked(const pair<int, int> attacker_top)
 		//if (is_alive[{it.first, it.second}])
 		// 제한0 : 자신을 제외
 		if (it.first.first == attacker_top.first && it.first.second == attacker_top.second) continue;
+		if ((top_force[{it.first.first, it.first.second}] > max_force) ||
+			(((top_force[{it.first.first, it.first.second}] == max_force) && (last_attack[{it.first.first, it.first.second}] < latest))) ||
+			(((top_force[{it.first.first, it.first.second}] == max_force) && (last_attack[{it.first.first, it.first.second}] == latest)) && (it.first.first + it.first.second) < min_sum_of_rc) ||
+			(((top_force[{it.first.first, it.first.second}] == max_force) && (last_attack[{it.first.first, it.first.second}] == latest)) && ((it.first.first + it.first.second) == min_sum_of_rc) && min_c > it.first.second)
+			)
+		{
+			min_c = it.first.second;
+			min_sum_of_rc = (it.first.first + it.first.second);
+			latest = last_attack[{it.first.first, it.first.second}];
+			max_force = top_force[{it.first.first, it.first.second}];
+			tar_top = { it.first.first, it.first.second };
+		
+		}
 
+
+		/*
 		if (is_alive[{it.first.first, it.first.second}])
 		{
 			// 제한 1 : 공격력이 가장 높은 포탑이 가장 강한 포탑
@@ -292,6 +326,7 @@ pair<int, int> select_attacked(const pair<int, int> attacker_top)
 
 			}
 		}
+		*/
 	}
 
 	return tar_top;
