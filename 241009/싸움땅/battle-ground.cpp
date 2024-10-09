@@ -167,7 +167,7 @@ void rotate(const int loser)
 	int cur_r = players_pos[loser].first;
 	int cur_c = players_pos[loser].second;
 	int cur_direc = players_direc[loser];
-	
+
 	int n_r;
 	int n_c;
 
@@ -185,7 +185,7 @@ void rotate(const int loser)
 			// loser_pos, loser_direc 처리
 			players_pos[loser] = make_pair(n_r, n_c);
 			players_direc[loser] = (cur_direc + i) % 4;
-			
+
 			return;
 		}
 	}
@@ -196,8 +196,8 @@ void rotate(const int loser)
 	// 원래 이동한 위치 구하기
 	//int n_r = r + off_r[direc];
 	//int n_c = c + off_c[direc];
-	
-	//loser의 현재 위치에서, 현재 방향의 90도 1/2/3번 회전한것들 상태 보기 
+
+	//loser의 현재 위치에서, 현재 방향의 90도 1/2/3번 회전한것들 상태 보기
 	int n_r;
 	int n_c;
 
@@ -347,7 +347,7 @@ void after_move(const int tar_player)
 			//make_pair(loser_nxt_r, loser_nxt_c) = rotate(players_pos[loser].first, players_pos[loser].second, players_direc[loser]);
 			rotate(loser);
 		}
-		
+
 
 		////////case2 : 이동한 칸에, 총이 있 -> 가장 공격력이 높은 총을 획득하고 나머지 총들은 해당 격자에 내려 놓
 		////////// pos, players_gun_pow, pos_to_guns 변경
@@ -360,12 +360,12 @@ void after_move(const int tar_player)
 			//players_gun_pow[loser] = pos_to_guns[loser_nxt_r][loser_nxt_r].back();
 			players_gun_pow[loser] = pos_to_guns[loser_nxt_r][loser_nxt_c].back();
 			pos_to_guns[loser_nxt_r][loser_nxt_c].pop_back();
-		
+
 			players_pos[loser] = make_pair(loser_nxt_r, loser_nxt_c);
 		}
 
-		//////// 이동 반영
-		//players_pos[loser] = make_pair(loser_nxt_r, loser_nxt_c);
+		//////// case1,2 모두 아닌경우 이동 반영
+		players_pos[loser] = make_pair(loser_nxt_r, loser_nxt_c);
 
 
 		//// 동작4 : 이긴 플레이어는 승리한 칸에 떨어져 있는 총들과 원래 들고 있던 총 중 가장 공격력이 높은 총을 획득하고, 나머지 총들은 해당 격자에 내려 놓
@@ -413,7 +413,7 @@ void after_move(const int tar_player)
 				//players_gun_pow[tar_player] = max(players_gun_pow[tar_player], pos_to_guns[tar_r][tar_c].back());
 				//pos_to_guns[tar_r][tar_c].back() = min(players_gun_pow[tar_player], pos_to_guns[tar_r][tar_c].back());
 
-				players_gun_pow[tar_player] = max(tmp, pos_to_guns[tar_r][tar_c].back());				
+				players_gun_pow[tar_player] = max(tmp, pos_to_guns[tar_r][tar_c].back());
 				pos_to_guns[tar_r][tar_c].back() = min(tmp, pos_to_guns[tar_r][tar_c].back());
 				//// (나머지 총들은 해당 격자에)
 				sorrrrt(tar_r, tar_c, pos_to_guns);
