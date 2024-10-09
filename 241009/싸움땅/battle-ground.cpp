@@ -365,7 +365,12 @@ void after_move(const int tar_player)
 		}
 
 		//////// case1,2 모두 아닌경우 이동 반영
-		players_pos[loser] = make_pair(loser_nxt_r, loser_nxt_c);
+		//players_pos[loser] = make_pair(loser_nxt_r, loser_nxt_c);
+		else
+		{
+			players_pos[loser] = make_pair(loser_nxt_r, loser_nxt_c);
+		}
+		
 
 
 		//// 동작4 : 이긴 플레이어는 승리한 칸에 떨어져 있는 총들과 원래 들고 있던 총 중 가장 공격력이 높은 총을 획득하고, 나머지 총들은 해당 격자에 내려 놓
