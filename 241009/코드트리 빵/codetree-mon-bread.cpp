@@ -2,6 +2,7 @@
 #include<set>
 #include<map>
 #include<queue>
+#include<deque>
 #include<utility>
 using namespace std;
 
@@ -171,25 +172,58 @@ void move_to_base(const int tarMan_idx)
 
 	//0. 
 	bool visit[N_MAX][N_MAX] = { false, };
-	queue<pair<int, int>> q_nodes;
+	deque<pair<int, int>> q_nodes;
 	set<pair<int, int>> cands;							//최단경로 내의 base 후보군들 위치 저장
 
+	//queue<pair<int, int>> tmp_queue;
 
 	//// 출발 : store_pos, 도착 : base
 	const int str_r = store_pos[tarMan_idx].first;
 	const int str_c = store_pos[tarMan_idx].second;
 
-	q_nodes.push({ str_r ,  str_c });
+	q_nodes.push_back({ str_r ,  str_c });
 	visit[str_r][str_c] = true;
 
-	pair<int, int> cur_node;
 	while (!q_nodes.empty())
 	{
-		//1. 
-		cur_node = q_nodes.front();
-		q_nodes.pop();
+		//// 0. 
+		deque<pair<int, int>> q_tmp;				// 출발지로부터 동일한 범위 내의 모든 격자들에 대해, 4방향 이동 좌표 저장 
+		pair<int, int> cur_node;
 
-		// 정답처리
+		//// 1. 출발지로부터 동일한 범위 내의 모든 격자들에 대해, 4방향 이동좌표 찾기 -> 도착지가 존재하는지 확인
+		for (auto it_nodes : q_nodes)
+		{
+			cur_node = it_nodes;
+
+			// case1 : 도착!
+			if (baseCamps_pos.find({ cur_node.first, cur_node.second }) != baseCamps_pos.end())			//도착!
+			{
+				cands.insert({ cur_node.first, cur_node.second });
+			}
+
+			// case2 : 현재 위치 기반 4방향 찾기
+			else
+			{
+				for (int i = 0; i < 4; ++i)
+				{
+					int nxt_r = cur_node.first + off_r[i];
+					int nxt_c = cur_node.second + off_c[i];
+
+					//제한0 : 범위초과
+					if (nxt_r < 1 || nxt_r > n || nxt_c < 1 || nxt_c > n)	continue;
+					//제한1
+					if (visit[nxt_r][nxt_c]) continue;
+					//제한2
+					if (mapp[nxt_r][nxt_c] == -1) continue;
+
+					q_tmp.push_back({ nxt_r, nxt_c });
+					visit[nxt_r][nxt_c] = true;
+				}
+			}
+		
+		}
+
+		////2. 정답처리
 		if (cands.size() > 0)
 		{
 			auto it = cands.begin();
@@ -203,34 +237,20 @@ void move_to_base(const int tarMan_idx)
 
 			return;
 		}
+		
 
-		for (int i = 0; i < 4; ++i)
-		{
-			int nxt_r = cur_node.first + off_r[i];
-			int nxt_c = cur_node.second + off_c[i];
-
-			//제한0 : 범위초과
-			if (nxt_r < 1 || nxt_r > n || nxt_c < 1 || nxt_c > n)	continue;
-			//제한1
-			if (visit[nxt_r][nxt_c]) continue;
-			//제한2
-			if (mapp[nxt_r][nxt_c] == -1) continue;
-
-			q_nodes.push({ nxt_r, nxt_c });
-			visit[nxt_r][nxt_c] = true;
-			if (baseCamps_pos.find({ nxt_r, nxt_c }) != baseCamps_pos.end())	// base켐프다!
-			{
-				cands.insert({ nxt_r, nxt_c });
-			}
-		}
+		////3.
+		q_nodes = q_tmp;
+	
 	}
+
 }
 
 void moveAll(const int tarPos_idx)
 {
 	//0. 
 	bool visit[N_MAX][N_MAX] = { false, };
-	queue<pair<int, int>> q_nodes;
+	deque<pair<int, int>> q_nodes;
 	set<pair<int, int>> cands;			// 이동할 위치 후보군들 저장
 	set<pair<int, int>> tars;			// 사람 현재 위치 기준 4방향 저장
 
@@ -251,9 +271,10 @@ void moveAll(const int tarPos_idx)
 	//// 출발 : store_pos, 도착 : tars
 	const int str_r = store_pos[tarPos_idx].first;
 	const int str_c = store_pos[tarPos_idx].second;
-	q_nodes.push({ str_r , str_c });
+	q_nodes.push_back({ str_r , str_c });
 	visit[str_r][str_c] = true;
 
+	/*
 	//// 출발 - 도착이 붙어있는 경우 처리
 	for (auto it : tars)
 	{
@@ -267,11 +288,79 @@ void moveAll(const int tarPos_idx)
 			have_to_erase_idx.insert(tarPos_idx);
 			be_wall.insert({ man_pos[tarPos_idx].first, man_pos[tarPos_idx].second });
 			is_arrived.insert(tarPos_idx);
-			
+
 			return;
 		}
 	}
+	*/
+	//1.
+	while (!q_nodes.empty())
+	{
+		////0. 
+		pair<int, int> cur_node;
+		deque<pair<int, int>> q_tmp;
 
+		////1.
+		for (auto it_nodes : q_nodes)
+		{
+			cur_node = it_nodes;
+		
+			// case1 : 도착!
+			if (tars.find({ cur_node.first, cur_node.second }) != tars.end())			//도착!
+			{
+				cands.insert({ cur_node.first, cur_node.second });
+			}
+		
+
+			// case2 : 현재 위치 기반 4방향 찾기
+			else
+			{
+				for (int i = 0; i < 4; ++i)
+				{
+					int nxt_r = cur_node.first + off_r[i];
+					int nxt_c = cur_node.second + off_c[i];
+
+					//제한0 : 범위초과
+					if (nxt_r < 1 || nxt_r > n || nxt_c < 1 || nxt_c > n)	continue;
+					//제한1
+					if (visit[nxt_r][nxt_c]) continue;
+					//제한2
+					if (mapp[nxt_r][nxt_c] == -1) continue;
+
+					q_tmp.push_back({ nxt_r, nxt_c });
+					visit[nxt_r][nxt_c] = true;
+				}
+			}
+		
+		}
+
+		////2. 정답처리
+		if (cands.size() > 0)
+		{
+			auto it = cands.begin();
+
+			//// man_pos 업데이트
+			man_pos[tarPos_idx].first = (*it).first;
+			man_pos[tarPos_idx].second = (*it).second;
+
+
+			//// 편의점 도착여부 확인 -> have_to_erase_idx, be_wall, is_arrived
+			//// be_wall 업데이트
+			if (man_pos[tarPos_idx].first == store_pos[tarPos_idx].first &&
+				man_pos[tarPos_idx].second == store_pos[tarPos_idx].second)
+			{
+				have_to_erase_idx.insert(tarPos_idx);
+				be_wall.insert({ man_pos[tarPos_idx].first, man_pos[tarPos_idx].second });
+				is_arrived.insert(tarPos_idx);
+			}
+
+			return;
+		}
+
+		////3.
+		q_nodes = q_tmp;
+	}
+	/*
 	//1. 
 	pair<int, int> cur_node;
 	while (!q_nodes.empty())
@@ -318,18 +407,13 @@ void moveAll(const int tarPos_idx)
 
 			q_nodes.push({ nxt_r, nxt_c });
 			visit[nxt_r][nxt_c] = true;
-			
+
 			if (tars.find({ nxt_r, nxt_c }) != tars.end())	// tars 다!
 			{
 				cands.insert({ nxt_r, nxt_c });
 			}
-			
+
 		}
 	}
-
-
-
-
-
-
+	*/
 }
