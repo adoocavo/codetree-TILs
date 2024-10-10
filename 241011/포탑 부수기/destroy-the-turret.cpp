@@ -349,14 +349,15 @@ void bomb(const pair<int, int> attacker_top, const pair<int, int> attacked_top)
 
 	// 공격 대상을 제외한 8경로에 있는 포탑 : '공격자의 공격력 / 2' 만큼 공격력 하락
 	int attack_power2 = attack_power1 / 2;
+	//for (int i = 0; i < 8; ++i)
 	for (int i = 0; i < 8; ++i)
 	{
 		//// 가장자리에서 막힌 방향으로 진행하고자 한다면, 반대편으로 나오는 처리 먼저 수행
 	//	int tar_r = (((attacked_top.first + dr[i]) - 1 + N) % N) + 1;
 	//	int tar_c = ((attacked_top.second + dc[i]) - 1 + M) % M + 1;
 
-		int tar_r = ((attacked_top.first + dr[i]) + N) % N;
-		int tar_c = ((attacked_top.second + dc[i]) + M) % M;
+		int tar_r = ((attacked_top.first + dr[i])) % N;
+		int tar_c = ((attacked_top.second + dc[i])) % M;
 		//// 제한 처리 : 공격자는 해당 공격에 영향을 받지 않는다. 
 		if (tar_r == attacker_top.first && tar_c == attacker_top.second) continue;
 
