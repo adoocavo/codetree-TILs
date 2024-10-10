@@ -353,11 +353,11 @@ void bomb(const pair<int, int> attacker_top, const pair<int, int> attacked_top)
 	for (int i = 0; i < 8; ++i)
 	{
 		//// 가장자리에서 막힌 방향으로 진행하고자 한다면, 반대편으로 나오는 처리 먼저 수행
-	//	int tar_r = (((attacked_top.first + dr[i]) - 1 + N) % N) + 1;
-	//	int tar_c = ((attacked_top.second + dc[i]) - 1 + M) % M + 1;
+		int tar_r = (((attacked_top.first + dr[i]) - 1 + N) % N) + 1;
+		int tar_c = ((attacked_top.second + dc[i]) - 1 + M) % M + 1;
 
-		int tar_r = ((attacked_top.first + dr[i])) % N;
-		int tar_c = ((attacked_top.second + dc[i])) % M;
+		//int tar_r = ((attacked_top.first + dr[i])) % N;
+		//int tar_c = ((attacked_top.second + dc[i])) % M;
 		//// 제한 처리 : 공격자는 해당 공격에 영향을 받지 않는다. 
 		if (tar_r == attacker_top.first && tar_c == attacker_top.second) continue;
 
