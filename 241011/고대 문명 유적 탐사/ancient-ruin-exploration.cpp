@@ -243,6 +243,7 @@ const int BFS(int(&tmp)[MAPP_SIZE][MAPP_SIZE], const int flag)
 
 void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, int(&tmp)[MAPP_SIZE][MAPP_SIZE])
 {
+	/*
 	//1. 
 	for (int i = 1; i <= 5; ++i)
 	{
@@ -251,7 +252,7 @@ void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, 
 			tmp[i][j] = mapp[i][j];
 		}
 	}
-
+	*/
 
 	//2. 
 	if (num_fo_rotate == 1)
