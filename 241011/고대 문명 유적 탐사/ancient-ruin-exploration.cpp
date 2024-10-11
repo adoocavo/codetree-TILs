@@ -13,7 +13,7 @@ int mapp[MAPP_SIZE][MAPP_SIZE];
 
 int K, M;						//
 queue<int> wall_info;
-int getPoint;					// 각 턴마다 출력, 갱신
+//int getPoint;					// 각 턴마다 출력, 갱신
 
 void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, int(&tmp)[MAPP_SIZE][MAPP_SIZE]);
 const int BFS(int(&tmp)[MAPP_SIZE][MAPP_SIZE], const int flag);			// 유물 획득
@@ -75,7 +75,8 @@ int main()
 					}
 					
 					////2. rotate
-					rotate(lr, lc, 3, i, tmp);
+					//rotate(lr, lc, 3, i, tmp);
+					rotate(lr, lc, 3, rotate_cnt, tmp);
 
 					////3. 초기 유물 획득 
 					int score_per_case = BFS(tmp, 0);
@@ -106,6 +107,25 @@ int main()
 				mapp[j][k] = tmp_mapp_for_select[j][k];
 			}
 		}
+
+		//// 1. 유물 획득 구현 : while loop 내에서 연쇄획득구현
+		int tmp_ans = 0;
+		int ans = 0;
+		while (1)
+		{
+			//// 획득
+			tmp_ans = BFS(mapp, 1);
+		
+			//// 업데이트
+			mapp_update(mapp);
+
+			//// 연쇄 획득
+			if (tmp_ans == 0) break;
+			else ans += tmp_ans;
+		}
+
+
+		/*
 		//// 1. 1차 획득
 		getPoint += BFS(mapp, 1);
 		
@@ -123,10 +143,12 @@ int main()
 
 			if (again_get == 0) { break; }
 			else { max_score += again_get; }
+			
 		}
-
+		*/
 		////3. max_score 출력
-		cout << max_score << ' ';
+		//cout << max_score << ' ';
+		cout << ans << ' ';
 	}
 	return 0;
 
@@ -255,11 +277,11 @@ void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, 
 	*/
 	//1. 
 	int tmp_tmp_mapp[MAPP_SIZE][MAPP_SIZE];
-	for (int i = 1; i <= 5; ++i)
+	for (int i = 0; i <= (len - 1); ++i)
 	{
-		for (int j = 1; j <= 5; ++j)
+		for (int j = 0; j <= (len - 1); ++j)
 		{
-			tmp_tmp_mapp[i][j] = tmp[i][j];
+			tmp_tmp_mapp[sr+i][sc+j] = tmp[sr+i][sc+j];
 		}
 	}
 
@@ -307,11 +329,11 @@ void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, 
 
 	
 	//3. 반영
-	for (int i = 1; i <= 5; ++i)
+	for (int i = 0; i <= (len - 1); ++i)
 	{
-		for (int j = 1; j <= 5; ++j)
+		for (int j = 0; j <= (len - 1); ++j)
 		{
-			tmp[i][j] = tmp_tmp_mapp[i][j];
+			tmp[sr + i][sc + j] = tmp_tmp_mapp[sr + i][sc + j];
 		}
 	}
 	
