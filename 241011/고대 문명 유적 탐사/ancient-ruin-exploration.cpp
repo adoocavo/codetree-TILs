@@ -48,11 +48,13 @@ int main()
 	}
 
 
-	//2. (1) '3×3 격자 선택 + 회전' case 중, 최적 회전 수행 (2) 최적 유물 획득 
-	int max_score = 0;
+	// 2. 게임 수행
+	int max_score;
 	for (int i = 1; i <= K; ++i)
 	{
+		//[1] 탐사 진행 (1) '3×3 격자 선택 + 회전' case 중, 최적 회전 수행 (2) 최적 유물 획득 
 		int tmp_mapp_for_select[MAPP_SIZE][MAPP_SIZE];
+		max_score = 0;
 		////1. 5×5 격자 내에서 '3×3 격자 선택 + 회전' -> 3가지 제한조건 고려한 최적의 회전 수행
 		for (int rotate_cnt = 1; rotate_cnt <= 3; ++rotate_cnt)
 		{
@@ -90,19 +92,29 @@ int main()
 
 		}
 
-		//
+		// 탐사 진행 과정에서 어떠한 방법을 사용하더라도 유물을 획득할 수 없었다면 모든 탐사는 그 즉시 종료 
 		if (max_score == 0) return 0;
 
-		//3. 업데이트
-		mapp_update(tmp_mapp_for_select);
+		//[2] 연쇄획득
+		//// 0. 
+		for (int j = 1; j <= 5; ++j)
+		{
+			for (int k = 1; k <= 5; ++k)
+			{
+				mapp[j][k] = tmp_mapp_for_select[j][k];
+			}
+		}
 
-		//4. 추가 획득
+		////1. 업데이트
+		mapp_update(mapp);
+
+		////2. 추가 획득
 		while (1)
 		{
 			int again_get = 0;
 
-			again_get = BFS(tmp_mapp_for_select);
-			mapp_update(tmp_mapp_for_select);
+			again_get = BFS(mapp);
+			mapp_update(mapp);
 
 			if (again_get == 0) { break; }
 			//if (again_get == 1) { break; }
@@ -111,19 +123,10 @@ int main()
 			else { max_score += again_get; }
 		}
 
-		//5. tmp_mapp_for_select -> mapp
-		mapp_copy(tmp_mapp_for_select, mapp);
-
-		//6. max_score 출력
-
+		////3. max_score 출력
 		cout << max_score << ' ';
-		max_score = 0;
-		/*
-		if (max_score < 1) return 0;
-		else { cout << max_score << ' '; }
-		*/
 	}
-
+	return 0;
 
 }
 
