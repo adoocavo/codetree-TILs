@@ -253,6 +253,16 @@ void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, 
 		}
 	}
 	*/
+	//1. 
+	int tmp_tmp_mapp[MAPP_SIZE][MAPP_SIZE];
+	for (int i = 1; i <= 5; ++i)
+	{
+		for (int j = 1; j <= 5; ++j)
+		{
+			tmp_tmp_mapp[i][j] = tmp[i][j];
+		}
+	}
+
 
 	//2. 
 	if (num_fo_rotate == 1)
@@ -262,7 +272,8 @@ void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, 
 		{
 			for (int j = 0; j <= (len - 1); ++j)
 			{
-				tmp[sr + j][sc + (len - 1) - i] = mapp[sr + i][sc + j];
+				//tmp[sr + j][sc + (len - 1) - i] = mapp[sr + i][sc + j];
+				tmp_tmp_mapp[sr + j][sc + (len - 1) - i] = tmp[sr + i][sc + j];
 			}
 		}
 	}
@@ -274,7 +285,8 @@ void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, 
 		{
 			for (int j = 0; j <= (len - 1); ++j)
 			{
-				tmp[sr + (len - 1) - i][sc + (len - 1) - j] = mapp[sr + i][sc + j];
+				//tmp[sr + (len - 1) - i][sc + (len - 1) - j] = mapp[sr + i][sc + j];
+				tmp_tmp_mapp[sr + (len - 1) - i][sc + (len - 1) - j] = tmp[sr + i][sc + j];
 			}
 		}
 	}
@@ -286,20 +298,21 @@ void rotate(const int sr, const int sc, const int len, const int num_fo_rotate, 
 		{
 			for (int j = 0; j <= (len - 1); ++j)
 			{
-				tmp[sr + (len - 1) - j][sc + i] = mapp[sr + i][sc + j];
+				//tmp[sr + (len - 1) - j][sc + i] = mapp[sr + i][sc + j];
+				tmp_tmp_mapp[sr + (len - 1) - j][sc + i] = tmp[sr + i][sc + j];
 			}
 		}
 
 	}
 
-	/*
-		//2-2. 반영
-		for (int i = 1; i <= 5; ++i)
+	
+	//3. 반영
+	for (int i = 1; i <= 5; ++i)
+	{
+		for (int j = 1; j <= 5; ++j)
 		{
-			for (int j = 1; j <= 5; ++j)
-			{
-				mapp[i][j] = tmp[i][j];
-			}
+			tmp[i][j] = tmp_tmp_mapp[i][j];
 		}
-	*/
+	}
+	
 }
