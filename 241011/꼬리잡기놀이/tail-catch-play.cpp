@@ -170,10 +170,14 @@ void building_team(void)
 						v[n_r][n_c] = true;
 						q_nodes.push({ n_r, n_c });
 					}
+				
+					//team_number++;
 				}
+
+				team_number++;
 			}
 
-			team_number++;
+			//team_number++;
 		}
 	}
 
@@ -217,8 +221,12 @@ void move_team(const int t_move)
 	//// 머리에 push
 	mem_list[t_move].push_front({ tar_push.first , tar_push.second });
 	//// mapp 반영
+	/*
 	mapp[cur_head.first][cur_head.second] = 2;
 	mapp[tar_push.first][tar_push.second] = 1;
+	*/
+	mapp[cur_head.first][cur_head.second] = t_move;
+	mapp[tar_push.first][tar_push.second] = t_move;
 
 
 	return;
@@ -259,8 +267,12 @@ void bye_man(const int check_r, const int check_c)
 	mem_list[teamidx].front() = c_tail;
 
 	//3. mapp 반영
+	/*
 	mapp[c_tail.first][c_tail.second] = 1;
 	mapp[c_head.first][c_head.second] = 3;
+	*/
+	mapp[c_tail.first][c_tail.second] = teamidx;
+	mapp[c_head.first][c_head.second] = teamidx;
 
 	return;
 }
