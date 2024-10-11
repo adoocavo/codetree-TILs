@@ -4,6 +4,7 @@
 #include<map>
 #include<deque>
 #include<cmath>
+#include<algorithm>
 using namespace std;
 
 
@@ -260,20 +261,42 @@ void bye_man(const int check_r, const int check_c)
 	team_score[teamidx] += getSocre;
 
 	//2. 앞, 뒤 바꾸기 
+	/*
 	pair<int, int>c_head = mem_list[teamidx].front();
 	pair<int, int>c_tail = mem_list[teamidx].back();
 	
 	mem_list[teamidx].back() = c_head;
 	mem_list[teamidx].front() = c_tail;
+	*/
+	/*
+	//for (int i = 0; i < mem_list[teamidx].size(); ++i)
+	//for (int i = 0; i < (mem_list[teamidx].size()/2); ++i)
+	for (int i = 0; i < (mem_list[teamidx].size()-1 / 2); ++i)
+	//for (int i = 0; i < (mem_list[teamidx].size() / 2) - 1; ++i)
+	{
+		pair<int, int> tmp = *(mem_list[teamidx].begin() + i);
+		*(mem_list[teamidx].begin() + i) = *(mem_list[teamidx].end() - 1 - i);
+		*(mem_list[teamidx].end() - 1 - i) = tmp;
+	}
+	*/
+	deque<pair<int, int>> tmp;
+	//for (int i = mem_list[teamidx].size()-1; i >=0; ++i)
+	for (int i = mem_list[teamidx].size() - 1; i >= 0; --i)
+	{
+		tmp.push_back(*(mem_list[teamidx].begin() + i));
+	}
+	mem_list[teamidx] = tmp;
 
-	//3. mapp 반영
+
+	//3. mapp 반영 => 필요X
 	/*
 	mapp[c_tail.first][c_tail.second] = 1;
 	mapp[c_head.first][c_head.second] = 3;
 	*/
+	/*
 	mapp[c_tail.first][c_tail.second] = teamidx;
 	mapp[c_head.first][c_head.second] = teamidx;
-
+	*/
 	return;
 }
 
@@ -289,7 +312,8 @@ void throw_ball(const int round)
 	if (direc == 0)
 	{
 		sr = str;
-		sc = 0;
+		//sc = 0;
+		sc = 1;
 	}
 	else if (direc == 1)
 	{
@@ -298,13 +322,26 @@ void throw_ball(const int round)
 	}
 	else if (direc == 2)
 	{
+		/*
 		sr = str;
+		sc = n;
+		*/
+		sr = (n - str) + 1;
 		sc = n;
 	}
 	else
 	{
+		/*
+		//sr = 0;
 		sr = 0;
 		sc = str;
+		*/
+		/*
+		sr = 1;
+		sc = str;
+		*/
+		sr = 1;
+		sc = (n - str) + 1;;
 	}
 
 
